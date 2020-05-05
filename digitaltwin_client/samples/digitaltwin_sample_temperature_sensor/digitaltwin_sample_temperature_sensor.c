@@ -38,12 +38,9 @@ static DIGITALTWIN_SAMPLE_TEMPERATURE_SENSOR_STATE digitaltwinSample_Temperature
 static const char* DigitalTwinSampleTemperatureSensor_TemperatureTelemetry = "temperature";
 
 //
-//  Property names and data for DigitalTwin read-only properties for this interface.
+//  Property names and data for DigitalTwin properties for this interface.
 //
-// digitaltwinSample_DeviceState* represents the environmental sensor's read-only property, whether its online or not.
 static const char digitaltwinSample_TargetTemperatureProperty[] = "targetTemperature";
-static double digitaltwinSample_TargetTemperatureData = 33.3;
-static const int digitaltwinSample_TargetTemperatureDataLen = sizeof(digitaltwinSample_TargetTemperatureData) - 1;
 
 // DigitalTwinSampleTemperatureSensor_TelemetryCallback is invoked when a DigitalTwin telemetry message
 // is either successfully delivered to the service or else fails.  For this sample, the userContextCallback
@@ -102,31 +99,6 @@ static void DigitalTwinSampleTemperatureSensor_PropertyCallback(DIGITALTWIN_CLIE
     }
 }
 
-// Sends a reported property for target temperature of this simulated device.
-static DIGITALTWIN_CLIENT_RESULT DigitalTwinSampleTemperatureSensor_ReportTargetTemperatureAsync(DIGITALTWIN_INTERFACE_CLIENT_HANDLE interfaceHandle)
-{
-    DIGITALTWIN_CLIENT_RESULT result;
-
-    char currentMessage[32];
-
-    sprintf(currentMessage, "%.3f", digitaltwinSample_TargetTemperatureData);
-
-    result = DigitalTwin_InterfaceClient_ReportPropertyAsync(interfaceHandle, digitaltwinSample_TargetTemperatureProperty,
-        (unsigned char*)currentMessage, digitaltwinSample_TargetTemperatureDataLen, NULL,
-        DigitalTwinSampleTemperatureSensor_PropertyCallback, (void*)digitaltwinSample_TargetTemperatureProperty);
-
-    if (result != DIGITALTWIN_CLIENT_OK)
-    {
-        LogError("TEMPERATURE_SENSOR_INTERFACE: Reporting property=<%s> failed, error=<%s>", digitaltwinSample_TargetTemperatureProperty, MU_ENUM_TO_STRING(DIGITALTWIN_CLIENT_RESULT, result));
-    }
-    else
-    {
-        LogInfo("TEMPERATURE_SENSOR_INTERFACE: Queued async report read only property for %s", digitaltwinSample_TargetTemperatureProperty);
-    }
-
-    return result;
-}
-
 // Processes a property update, which the server initiated, for customer name.
 static void DigitalTwinSampleTemperatureSensor_TargetTemperatureCallback(const DIGITALTWIN_CLIENT_PROPERTY_UPDATE* dtClientPropertyUpdate, void* propertyCallbackContext)
 {
@@ -156,9 +128,9 @@ static void DigitalTwinSampleTemperatureSensor_TargetTemperatureCallback(const D
     //
     // DigitalTwin_InterfaceClient_ReportPropertyAsync takes the DIGITALTWIN_CLIENT_PROPERTY_RESPONSE and returns information back to service.
     //
-    result = DigitalTwin_InterfaceClient_ReportPropertyAsync(tempSensorState->interfaceClientHandle, DigitalTwinSampleTemperatureSensor_TemperatureTelemetry,
+    result = DigitalTwin_InterfaceClient_ReportPropertyAsync(tempSensorState->interfaceClientHandle, digitaltwinSample_TargetTemperatureProperty,
         dtClientPropertyUpdate->propertyDesired, dtClientPropertyUpdate->propertyDesiredLen, &propertyResponse,
-        DigitalTwinSampleTemperatureSensor_PropertyCallback, (void*)DigitalTwinSampleTemperatureSensor_TemperatureTelemetry);
+        DigitalTwinSampleTemperatureSensor_PropertyCallback, (void*)digitaltwinSample_TargetTemperatureProperty);
     if (result != DIGITALTWIN_CLIENT_OK)
     {
         LogError("TEMPERATURE_SENSOR_INTERFACE: DigitalTwin_InterfaceClient_ReportPropertyAsync for CustomerName failed, error=<%s>", MU_ENUM_TO_STRING(DIGITALTWIN_CLIENT_RESULT, result));
@@ -194,8 +166,7 @@ static void DigitalTwinSampleTemperatureSensor_InterfaceRegisteredCallback(DIGIT
         // Once the interface is registered, send our reported properties to the service.  
         // It *IS* safe to invoke most DigitalTwin API calls from a callback thread like this, though it 
         // is NOT safe to create/destroy/register interfaces now.
-        LogInfo("TEMPERATURE_SENSOR_INTERFACE: Interface successfully registered.");
-        DigitalTwinSampleTemperatureSensor_ReportTargetTemperatureAsync(tempSensorState->interfaceClientHandle);
+        LogInfo("TEMPERATURE_SENSOR_INTERFACE: Interface successfully registered, targetTemperature=<%f>", tempSensorState->targetTemperature);
     }
     else if (dtInterfaceStatus == DIGITALTWIN_CLIENT_ERROR_INTERFACE_UNREGISTERING)
     {
