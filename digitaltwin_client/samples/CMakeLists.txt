@@ -14,6 +14,8 @@ function(add_sample_directory whatIsBuilding)
 endfunction()
 
 set(DIGITALTWIN_SAMPLE_ENVIRONMENTAL_SENSOR_INC_FOLDER ${CMAKE_CURRENT_LIST_DIR}/digitaltwin_sample_environmental_sensor CACHE INTERNAL "this is what needs to be included if using digitaltwin_client lib" FORCE)
+set(DIGITALTWIN_SAMPLE_TEMPERATURE_SENSOR_INC_FOLDER ${CMAKE_CURRENT_LIST_DIR}/digitaltwin_sample_temperature_sensor CACHE INTERNAL "this is what needs to be included if using digitaltwin_client lib" FORCE)
+set(DIGITALTWIN_SAMPLE_DIAGNOSTICS_INC_FOLDER ${CMAKE_CURRENT_LIST_DIR}/digitaltwin_sample_diagnostics CACHE INTERNAL "this is what needs to be included if using digitaltwin_client lib" FORCE)
 
 add_sample_directory(digitaltwin_sample_device)
 if (${use_prov_client})
@@ -22,3 +24,7 @@ endif()
 add_sample_directory(digitaltwin_sample_device_info)
 add_sample_directory(digitaltwin_sample_environmental_sensor)
 add_sample_directory(digitaltwin_sample_sdk_info)
+
+add_sample_directory(digitaltwin_sample_thermostat_device)
+add_sample_directory(digitaltwin_sample_temperature_sensor)
+add_sample_directory(digitaltwin_sample_diagnostics)

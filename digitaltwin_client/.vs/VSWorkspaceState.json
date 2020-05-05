@@ -1,0 +1,11 @@
+{
+  "ExpandedNodes": [
+    "",
+    "\\samples",
+    "\\samples\\digitaltwin_sample_temperature_sensor",
+    "\\samples\\digitaltwin_sample_thermostat_device",
+    "\\src"
+  ],
+  "SelectedNode": "\\samples\\digitaltwin_sample_thermostat_device\\CMakeLists.txt",
+  "PreviewInSolutionExplorer": false
+}
